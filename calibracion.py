@@ -39,8 +39,8 @@ for fname in images:
 		img_res= img.copy()
 		img_res= cv2.resize(img_res, None, fx=0.25, fy=.25)
 
-		cv2.imshow('findCorners',img_res)
-		cv2.waitKey(1)
+		# cv2.imshow('findCorners',img_res)
+		# cv2.waitKey(1)
 
 cv2.destroyAllWindows()
 
@@ -55,15 +55,26 @@ ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.sh
 # print (("tvecs: \ n"), tvecs) # vector de traducción # parámetros externos
 
 # Des-distorsión
-img2 = cv2.imread('imagenes/2.jpg')
+img2 = cv2.imread('imagenes/9.jpg')
 h,w = img2.shape[:2]
 newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w, h), 0, (w, h)) # Parámetro de escala libre
-dst = cv2.undistort(img2, mtx, dist, None, newcameramtx)
+# dst = cv2.undistort(img2, mtx, dist, None, newcameramtx)
 
-# Recorte la imagen de acuerdo con el área de ROI anterior
-x,y,w,h = roi
+# # Recorte la imagen de acuerdo con el área de ROI anterior
+# x,y,w,h = roi
+# dst = dst[y:y+h, x:x+w]
+# cv2.imwrite('calibresult.jpg',dst)
+
+
+
+# Undistort with Remapping
+mapx, mapy = cv2.initUndistortRectifyMap(newcameramtx, dist, None, newcameramtx, (w,h), 5)
+dst = cv2.remap(img2, mapx, mapy, cv2.INTER_LINEAR)
+
+# crop the image
+x, y, w, h = roi
 dst = dst[y:y+h, x:x+w]
-cv2.imwrite('calibresult.jpg',dst)
+cv2.imwrite('caliResult2.png', dst)
 
 # Error de proyección posterior
 total_error = 0
