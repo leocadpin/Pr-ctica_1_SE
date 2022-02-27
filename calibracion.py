@@ -1,7 +1,7 @@
-from dis import dis
 import cv2
 import numpy as np
 import glob
+from dis import dis
 
 # Encuentra esquinas de tablero de ajedrez
 # Límite
@@ -30,21 +30,20 @@ for fname in images:
 	
 	# Si encuentra suficientes puntos, guárdelos
 	if ret == True:
-		cv2.cornerSubPix(gray,corners,(11,11),(-1,-1),criteria)
 		objpoints.append(objp)
+		corners2 = cv2.cornerSubPix(gray,corners,(11,11),(-1,-1),criteria)
 		imgpoints.append(corners)
 		
 		# Mostrar los puntos de esquina en la imagen
-		cv2.drawChessboardCorners(img, (w,h), corners, ret)
+		cv2.drawChessboardCorners(img, (w,h), corners2, ret)
 
-		img_res= img.copy()
-		img_res= cv2.resize(img_res, None, fx=0.25, fy=.25)
+		# img_res= img.copy()
+		# img_res= cv2.resize(img_res, None, fx=0.25, fy=.25)
 
-		# cv2.imshow('findCorners',img_res)
-		# cv2.waitKey(1)
+		cv2.imshow('findCorners', img)
+		cv2.waitKey(0)
 
 cv2.destroyAllWindows()
-
 
 # Calibración
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
@@ -56,21 +55,20 @@ ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.sh
 # print (("tvecs: \ n"), tvecs) # vector de traducción # parámetros externos
 
 # Des-distorsión
-img2 = cv2.imread('imagenes/1.jpg')
-h,w = img2.shape[:2]
-newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w, h), 0, (w, h)) # Parámetro de escala libre
-# dst = cv2.undistort(img2, mtx, dist, None, newcameramtx)
+img = cv2.imread('imagenes/10.jpg')
+h,w = img.shape[:2]
+newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w, h), 1, (w, h)) # Parámetro de escala libre
+
+# dst = cv2.undistort(img, mtx, dist, None, newcameramtx)
 
 # # Recorte la imagen de acuerdo con el área de ROI anterior
 # x,y,w,h = roi
 # dst = dst[y:y+h, x:x+w]
 # cv2.imwrite('calibresult.jpg',dst)
 
-
-
 # Undistort with Remapping
-mapx, mapy = cv2.initUndistortRectifyMap(newcameramtx, dist, None, newcameramtx, (w,h), 5)
-dst = cv2.remap(img2, mapx, mapy, cv2.INTER_LINEAR)
+mapx, mapy = cv2.initUndistortRectifyMap(mtx, dist, None, newcameramtx, (w,h), 5)
+dst = cv2.remap(img, mapx, mapy, cv2.INTER_LINEAR)
 
 # crop the image
 x, y, w, h = roi
