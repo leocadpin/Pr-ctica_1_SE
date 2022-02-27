@@ -1,3 +1,4 @@
+from dis import dis
 import cv2
 import numpy as np
 import glob
@@ -55,7 +56,7 @@ ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.sh
 # print (("tvecs: \ n"), tvecs) # vector de traducción # parámetros externos
 
 # Des-distorsión
-img2 = cv2.imread('imagenes/9.jpg')
+img2 = cv2.imread('imagenes/1.jpg')
 h,w = img2.shape[:2]
 newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w, h), 0, (w, h)) # Parámetro de escala libre
 # dst = cv2.undistort(img2, mtx, dist, None, newcameramtx)
@@ -75,6 +76,8 @@ dst = cv2.remap(img2, mapx, mapy, cv2.INTER_LINEAR)
 x, y, w, h = roi
 dst = dst[y:y+h, x:x+w]
 cv2.imwrite('caliResult2.png', dst)
+
+np.savez('ParamsCamera', mtx= mtx, distance= dist, rvecs=rvecs, tvecs= tvecs)
 
 # Error de proyección posterior
 total_error = 0

@@ -1,10 +1,13 @@
-import cv2
+import cv2 as cv
 import numpy as np
 import glob
+import os
 
+path='imagenes/'
+root=os.getcwd()
 # Load previously saved data
-with np.load('CameraParams.npz') as file:
-    mtx, dist, rvecs, tvecs = [file[i] for i in ('cameraMatrix','dist','rvecs','tvecs')]
+with np.load('ParamsCamera.npz') as file:
+    mtx, dist, rvecs, tvecs = [file[i] for i in ('cameramatrix','distance','rvecs','tvecs')]
 
 
 def draw(img, corners, imgpts):
@@ -44,25 +47,48 @@ axisBoxes = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
                    [0,0,-3],[0,3,-3],[3,3,-3],[3,0,-3] ])
 
 
-for image in glob.glob('undistorted*.png'):
 
-    img = cv.imread(image)
-    gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
-    ret, corners = cv.findChessboardCorners(gray, (24,17),None)
-
+l=os.listdir(path)
+for i in l:
+    path1=os.path.join(root,path,i)
+    im=cv.imread(path1)
+    gray=cv.cvtColor(im,cv.COLOR_BGR2GRAY)
+    ret,corners = cv.findChessboardCorners(gray,(9,6),None)
     if ret == True:
+        _,rvec,tvec,_=cv.solvePnPRansac(objp,corners,mtx,dist)
+        imgpts,_=cv.projectPoints(axis,rvecs,tvecs,mtx,dist)
+        img = draw(im,corners,imgpts)
+        cv.imshow('images',img)
+        cv.waitKey()
+        cv.destroyAllWindows()
 
-        corners2 = cv.cornerSubPix(gray,corners,(11,11),(-1,-1), criteria)
 
-        # Find the rotation and translation vectors.
-        ret, rvecs, tvecs = cv.solvePnP(objp, corners2, mtx, dist)
+# for image in glob.glob('caliResult2.png'):
 
-        # Project 3D points to image plane
-        imgpts, jac = cv.projectPoints(axisBoxes, rvecs, tvecs, mtx, dist)
 
-        img = drawBoxes(img,corners2,imgpts)
-        cv.imshow('img',img)
 
-        k = cv.waitKey(0) & 0xFF
-        if k == ord('s'):
-            cv.imwrite('pose'+image, img)
+
+#     img = cv.imread(image)
+#     gray = cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+#     ret, corners = cv.findChessboardCorners(gray, (24,17),None)
+
+#     if ret == True:
+
+#         corners2 = cv.cornerSubPix(gray,corners,(11,11),(-1,-1), criteria)
+
+#         # Find the rotation and translation vectors.
+#         ret, rvecs, tvecs = cv.solvePnP(objp, corners2, mtx, dist)
+
+#         # Project 3D points to image plane
+#         imgpts, jac = cv.projectPoints(axisBoxes, rvecs, tvecs, mtx, dist)
+
+#         img = drawBoxes(img,corners2,imgpts)
+#         cv.imshow('img',img)
+
+#         k = cv.waitKey(0) & 0xFF
+#         if k == ord('s'):
+#             cv.imwrite('pose'+image, img)
+
+
+
+# cv.destroyAllWindows()
