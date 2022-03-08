@@ -19,13 +19,13 @@ objp[:,:2] = np.mgrid[0:w,0:h].T.reshape(-1,2)
 objpoints = [] # puntos 3D en el sistema mundial de coordenadas
 imgpoints = [] # Puntos bidimensionales en el plano de la imagen
 
-images = glob.glob('patron_1_movil/*.jpg')
+images = glob.glob('patron_1_portatil/*.jpg')
 
 for fname in images:
 	img = cv2.imread(fname)
 
-	img_c = img.copy()
-	img = cv2.resize(img_c, None, fx=0.5, fy=0.5)
+	# img_c = img.copy()
+	# img = cv2.resize(img_c, None, fx=0.75, fy=0.75)
 
 	gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
@@ -44,8 +44,8 @@ for fname in images:
 		# img_res= img.copy()
 		# img_res= cv2.resize(img_res, None, fx=0.25, fy=.25)
 
-		cv2.imshow('findCorners', img)
-		cv2.waitKey(0)
+		# cv2.imshow('findCorners', img)
+		# cv2.waitKey(0)
 
 cv2.destroyAllWindows()
 
@@ -59,7 +59,11 @@ ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.sh
 # print (("tvecs: \ n"), tvecs) # vector de traducción # parámetros externos
 
 # Des-distorsión
-img = cv2.imread('patron_1_movil/5.jpg')
+img = cv2.imread('patron_1_portatil/1.jpg')
+
+# img_c = img.copy()
+# img = cv2.resize(img_c, None, fx=0.75, fy=0.75)
+
 h,w = img.shape[:2]
 newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w, h), 1, (w, h)) # Parámetro de escala libre
 
@@ -74,11 +78,10 @@ newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w, h), 1, (w, h))
 mapx, mapy = cv2.initUndistortRectifyMap(mtx, dist, None, newcameramtx, (w,h), 5)
 dst = cv2.remap(img, mapx, mapy, cv2.INTER_LINEAR)
 
-# crop the image
+# Crop the image
 x, y, w, h = roi
 dst = dst[y:y+h, x:x+w]
-cv2.imwrite('caliResult2.png', dst)
-
+cv2.imwrite('calibResult.jpg', dst)
 np.savez('ParamsCamera', mtx= mtx, distance= dist, rvecs=rvecs, tvecs= tvecs)
 
 # Error de proyección posterior
