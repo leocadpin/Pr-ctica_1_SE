@@ -19,12 +19,16 @@ objp[:,:2] = np.mgrid[0:w,0:h].T.reshape(-1,2)
 objpoints = [] # puntos 3D en el sistema mundial de coordenadas
 imgpoints = [] # Puntos bidimensionales en el plano de la imagen
 
-images = glob.glob('imagenes/*.jpg')
+images = glob.glob('patron_1_movil/*.jpg')
 
 for fname in images:
 	img = cv2.imread(fname)
+
+	img_c = img.copy()
+	img = cv2.resize(img_c, None, fx=0.5, fy=0.5)
+
 	gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-	
+
 	# Encuentra la esquina del tablero de ajedrez
 	ret, corners = cv2.findChessboardCorners(gray, (w,h), None)
 	
@@ -55,7 +59,7 @@ ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.sh
 # print (("tvecs: \ n"), tvecs) # vector de traducción # parámetros externos
 
 # Des-distorsión
-img = cv2.imread('imagenes/10.jpg')
+img = cv2.imread('patron_1_movil/5.jpg')
 h,w = img.shape[:2]
 newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w, h), 1, (w, h)) # Parámetro de escala libre
 
