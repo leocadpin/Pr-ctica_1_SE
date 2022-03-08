@@ -34,7 +34,7 @@ objp[:,:2] = np.mgrid[0:wight,0:hight].T.reshape(-1,2)
 
 
 axis = np.float32([[0,0,0], [0,3*72,0], [3*72,3*72,0], [3*72,0,0],
-                   [0,0,-3*72],[0,3*72,-3*72],[3*72,3*72,-3*72],[3*72,0,-3*72] ])
+                   [0,0,-3*72],[0,3*72,-3*72],[3*72,3*72,-3*72],[3*72,0,-3*72] ]).reshape(-1,3)
 cam=cv.VideoCapture(0)
 out = cv.VideoWriter('output.avi',cv.VideoWriter_fourcc('M','J','P','G'), 10, (int(cam.get(3)),int(cam.get(4))))
 
