@@ -19,9 +19,12 @@ objp[:,:2] = np.mgrid[0:w,0:h].T.reshape(-1,2)
 objpoints = [] # puntos 3D en el sistema mundial de coordenadas
 imgpoints = [] # Puntos bidimensionales en el plano de la imagen
 
+
+#Añadimos la ruta a la carpeta de imagenes del tablero para calibrar
 images = glob.glob('patron_1_portatil/*.jpg')
 
-for fname in images:
+
+for fname in images: #Repetimos el siguiente proceso para cada imagen
 	img = cv2.imread(fname)
 
 	# img_c = img.copy()
@@ -29,12 +32,14 @@ for fname in images:
 
 	gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
-	# Encuentra la esquina del tablero de ajedrez
+	# Encuentra la esquina del tablero de ajedrez. Funcion de OpenCV
 	ret, corners = cv2.findChessboardCorners(gray, (w,h), None)
 	
 	# Si encuentra suficientes puntos, guárdelos
 	if ret == True:
 		objpoints.append(objp)
+
+		#buscamos la localizacion mas adecuada para los subpixeles
 		corners2 = cv2.cornerSubPix(gray,corners,(11,11),(-1,-1),criteria)
 		imgpoints.append(corners)
 		
@@ -50,6 +55,8 @@ for fname in images:
 cv2.destroyAllWindows()
 
 # Calibración
+#Usamos la funcion calibrate camera, que obtendrá los parámetros intrinsecos y extrinsecos de la
+#camara. (Esta funcion aplicará el algoritmo de Levenberg Marquardt)
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
 
 # print (("ret:"),ret)
@@ -58,13 +65,18 @@ ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.sh
 # print (("rvecs: \ n"), rvecs) # vector de rotación # parámetros externos
 # print (("tvecs: \ n"), tvecs) # vector de traducción # parámetros externos
 
-# Des-distorsión
-img = cv2.imread('patron_1_portatil/1.jpg')
+# Des-distorsión: Sabiendo los parametros de nuestra camara podemos corregir el error en distorsion
+
+
+img = cv2.imread('patron_1_portatil/1.jpg') #Tomamos una imagen de las que usamos en la calibracion
 
 # img_c = img.copy()
 # img = cv2.resize(img_c, None, fx=0.75, fy=0.75)
 
-h,w = img.shape[:2]
+
+h,w = img.shape[:2] #obtenemos dimensiones de la imagen
+
+#Obtenemos la nueva matriz de parametros intrinsecos de la camara 
 newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w, h), 1, (w, h)) # Parámetro de escala libre
 
 # dst = cv2.undistort(img, mtx, dist, None, newcameramtx)
@@ -74,17 +86,26 @@ newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w, h), 1, (w, h))
 # dst = dst[y:y+h, x:x+w]
 # cv2.imwrite('calibresult.jpg',dst)
 
-# Undistort with Remapping
+# Undistort usando un remapeado 
+
+#Usamos la siguiente funcion para conseguir la rectificacion de la imagen dandonos como
+#resultado mapas para remapear la imagen original
 mapx, mapy = cv2.initUndistortRectifyMap(mtx, dist, None, newcameramtx, (w,h), 5)
 dst = cv2.remap(img, mapx, mapy, cv2.INTER_LINEAR)
 
-# Crop the image
+# Recortamos la imagen
 x, y, w, h = roi
 dst = dst[y:y+h, x:x+w]
 cv2.imwrite('calibResult.jpg', dst)
 np.savez('ParamsCamera', mtx= mtx, distance= dist, rvecs=rvecs, tvecs= tvecs)
 
-# Error de proyección posterior
+# Error de proyección posterior, para todos los puntos del tablero
+# 1- sacamos la proyeccion de los puntos 3d de la imagen usando los parametros
+# que hemos obtenido en la calibracion
+# 2-calculamos la norma entre las proyecciones y los puntos bidimensionales 
+# 3-dividimos entre el numero de puntos para obtener un resultado normalizado
+# 4-vamos acumulando este error y finalmente sacamos la media aritmética
+# 5- Cuanto mas pequeño sea el valor, mas exactos deberian ser nuestros parametros
 total_error = 0
 for i in range(len(objpoints)):
 	imgpoints2, _ = cv2.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
