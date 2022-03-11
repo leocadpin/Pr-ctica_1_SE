@@ -111,4 +111,6 @@ for i in range(len(objpoints)):
 	imgpoints2, _ = cv2.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
 	error = cv2.norm(imgpoints[i],imgpoints2, cv2.NORM_L2)/len(imgpoints2)
 	total_error += error
+alt, anch = img.shape[:2]
+#diagonal = raiz de alt² y anch²
 print(("total error: "), total_error/len(objpoints))
