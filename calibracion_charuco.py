@@ -1,11 +1,11 @@
 import cv2
 import numpy as np
 import pathlib
-import cv2.aruco as aruco
+from cv2 import aruco as aruco
 import glob
 
 #Añadimos la ruta a la carpeta de imagenes del tablero para calibrar
-images = glob.glob('patron_1_portatil/*.jpg')
+images = glob.glob('patron_charuco/*.jpg')
 
 # Parameters
 
@@ -19,7 +19,7 @@ square_length = 1.5
 #def calibrate_charuco(dirpath, image_format, marker_length, square_length):
 
 aruco_dict = aruco.Dictionary_get(aruco.DICT_6X6_1000)
-board = aruco.CharucoBoard_create(5, 7, square_length, marker_length, aruco_dict)
+board = aruco.CharucoBoard_create(7, 5, square_length, marker_length, aruco_dict)
 arucoParams = aruco.DetectorParameters_create()
 
 
@@ -64,7 +64,7 @@ ret, mtx, dist, rvecs, tvecs = aruco.calibrateCameraCharuco(
 # 
 
 np.savez('ParamsCamera_charuco', mtx= mtx, distance= dist, rvecs=rvecs, tvecs= tvecs)
-original = cv2.imread('patron_1_portatil/1.jpg')
+original = cv2.imread('patron_charuco/1.jpg')
 dst = cv2.undistort(original, mtx, dist, None, mtx)
 cv2.imwrite('undist_charuco.jpg', dst)
 # Error de proyección posterior, para todos los puntos del tablero
