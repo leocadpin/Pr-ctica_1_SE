@@ -5,14 +5,16 @@ import glob
 wight = 9
 hight = 6
 
-# Load previously saved data
+# Cargamos los parámetros de la camara obtenidos en la calibración
 with np.load('ParamsCamera_patroncirc.npz') as X:
     mtx, dist, _, _ = [X[i] for i in ('mtx','distance','rvecs','tvecs')]
 
-# Definimos la función que dibuja el objeto
+############# Definimos la función que dibujará nuestro objeto, en este caso la funcion dibuja un hombre de palo azul ###########
+
 def draw(img, corners, imgpts):
     imgpts = np.int32(imgpts).reshape(-1,2)
     
+    #Todos lo que dibujamos en este caso son puntos que corresponden a los axis que hemos definido 
     img = cv.line(img, tuple(imgpts[1]), tuple(imgpts[3]), (255), 3)
     img = cv.line(img, tuple(imgpts[2]), tuple(imgpts[5]), (255), 3)
     img = cv.line(img, tuple(imgpts[3]), tuple(imgpts[5]), (255), 3)
@@ -24,10 +26,13 @@ def draw(img, corners, imgpts):
 
     return img
 
+# Creamos un criterio de terminacion
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+
+# Definimos la malla de puntos que colocaremos sobre el tablero
 objp = np.zeros((hight*wight,3), np.float32)
 objp[:,:2] = np.mgrid[0:wight,0:hight].T.reshape(-1,2)
-
+# En axis introducimos las coordenadas de los puntos a dibujar del stickman
 # axis = np.float32([ [0,0,0],
 #                     [0,1,0], [0,3,0],
 #                     [0,1,-3], [0,2,-3], [0,3,-3],
@@ -42,8 +47,17 @@ axis = np.float32([ [0*72,0*72,0*72],
                     [0,0,-3*72], [0,4*72,-3*72],
                     [0,2*72,-7*72]])
 
+# Activamos la camara 
 cam=cv.VideoCapture(0)
 out = cv.VideoWriter('output.avi',cv.VideoWriter_fourcc('M','J','P','G'), 10, (int(cam.get(3)),int(cam.get(4))))
+
+# Mientras la camara este capturando imagenes, para cada frame:
+# 1- Sacamos las esquinas del tablero
+# 2- Si encontramos las esquinas obtenemos los subpixeles de estas 
+# 3- Usamos la funcion pnp para que resuelva el problema de calcular la posicion de la camara
+# 4- Teniendo las matrices de transformacion entre sistemas, podemos proyectar los puntos definidos en 
+# axis, y asi encontrar la correspondencia entre los puntos 3d y 2d
+# 5- Usamos draw() para dibujar el cubo como hemos descrito más arriba
 while True:
     hasframe,frame=cam.read()
     if hasframe==False:
