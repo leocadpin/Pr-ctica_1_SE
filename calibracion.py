@@ -49,8 +49,8 @@ for fname in images: #Repetimos el siguiente proceso para cada imagen
 		# img_res= img.copy()
 		# img_res= cv2.resize(img_res, None, fx=0.25, fy=.25)
 
-		# cv2.imshow('findCorners', img)
-		# cv2.waitKey(0)
+		cv2.imshow('findCorners', img)
+		cv2.waitKey(0)
 
 cv2.destroyAllWindows()
 
