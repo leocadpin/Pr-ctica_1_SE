@@ -8,7 +8,7 @@ hight = 5
 
 # Cargamos los parámetros de la camara obtenidos en la calibración
 with np.load('ParamsCamera_charuco.npz') as X:
-    mtx, dist, _, _ = [X[i] for i in ('mtx','distance','rvecs','tvecs')]
+    mtx, dist, rvecs, tvecs = [X[i] for i in ('mtx','distance','rvecs','tvecs')]
 
 
 squareLength = 1.5
@@ -34,7 +34,7 @@ def draw(img, corners, imgpts):
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
 # Definimos la malla de puntos que colocaremos sobre el tablero
-aruco_dict = aruco.getPredefinedDictionary( aruco.DICT_6X6_1000 )
+aruco_dict = aruco.getPredefinedDictionary( aruco.DICT_6X6_250 )
 squareLength = 1.5
 markerLength = 1.2
 board = aruco.CharucoBoard_create(7, 5, squareLength, markerLength, aruco_dict)
@@ -77,15 +77,16 @@ while True:
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=arucoParams)  # First, detect markers
     aruco.refineDetectedMarkers(gray, board, corners, ids, rejectedImgPoints)
 
-    if np.any(ids) == False: # if there is at least one marker detected
+    im_with_charuco_board = frame.copy()
+
+    if np.all(ids != None): # if there is at least one marker detected
             charucoretval, charucoCorners, charucoIds = aruco.interpolateCornersCharuco(corners, ids, gray, board)
-            im_with_charuco_board = aruco.drawDetectedCornersCharuco(gray, charucoCorners, charucoIds, (0,255,0))
-            retval, rvec, tvec = aruco.estimatePoseCharucoBoard(charucoCorners, charucoIds, board, mtx, dist)  # posture estimation from a charuco board
+            im_with_charuco_board = aruco.drawDetectedCornersCharuco(im_with_charuco_board, charucoCorners, charucoIds, (0,255,0))
+            retval, rvec, tvec = aruco.estimatePoseCharucoBoard(charucoCorners, charucoIds, board, mtx, dist, rvecs, tvecs)  # posture estimation from a charuco board (retval - buena estimacion)
             if retval == True:
-                im_with_charuco_board = aruco.drawAxis(im_with_charuco_board, mtx, dist, rvec, tvec, 100)  # axis length 100 can be changed according to your requirement
-    else:
-        im_with_charuco_board = gray
-    cv.imshow('images',frame)
+                im_with_charuco_board = aruco.drawAxis(im_with_charuco_board, mtx, dist, rvec, tvec, 2)  # axis length 100 can be changed according to your requirement
+
+    cv.imshow('images', im_with_charuco_board)
     if cv.waitKey(1)==13:
         break
 cv.destroyAllWindows()
