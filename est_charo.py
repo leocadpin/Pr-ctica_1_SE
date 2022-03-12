@@ -57,7 +57,7 @@ axis = np.float32([ [0,0,0],
 #                     [0,2*72,-7*72]])
 
 # Activamos la camara 
-cam=cv.VideoCapture(0)
+cam=cv.VideoCapture(-1)
 out = cv.VideoWriter('output.avi',cv.VideoWriter_fourcc('M','J','P','G'), 10, (int(cam.get(3)),int(cam.get(4))))
 
 # Mientras la camara este capturando imagenes, para cada frame:
@@ -77,16 +77,15 @@ while True:
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=arucoParams)  # First, detect markers
     aruco.refineDetectedMarkers(gray, board, corners, ids, rejectedImgPoints)
 
-    if ids != None: # if there is at least one marker detected
+    if np.any(ids) == False: # if there is at least one marker detected
             charucoretval, charucoCorners, charucoIds = aruco.interpolateCornersCharuco(corners, ids, gray, board)
             im_with_charuco_board = aruco.drawDetectedCornersCharuco(gray, charucoCorners, charucoIds, (0,255,0))
-            retval, rvec, tvec = aruco.estimatePoseCharucoBoard(charucoCorners, charucoIds, board, camera_matrix, dist_coeffs)  # posture estimation from a charuco board
+            retval, rvec, tvec = aruco.estimatePoseCharucoBoard(charucoCorners, charucoIds, board, mtx, dist)  # posture estimation from a charuco board
             if retval == True:
                 im_with_charuco_board = aruco.drawAxis(im_with_charuco_board, mtx, dist, rvec, tvec, 100)  # axis length 100 can be changed according to your requirement
     else:
-        im_with_charuco_left = gray
+        im_with_charuco_board = gray
     cv.imshow('images',frame)
-    out.write(frame)
     if cv.waitKey(1)==13:
         break
 cv.destroyAllWindows()
