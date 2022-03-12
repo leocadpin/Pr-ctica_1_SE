@@ -31,6 +31,7 @@ def draw(img, corners, imgpts):
     return img
 ###########################################################################################################
 
+
 # Creamos un criterio de terminacion
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
@@ -49,7 +50,7 @@ axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
 # 4- Teniendo las matrices de transformacion entre sistemas, podemos proyectar los puntos definidos en 
 # axis, y asi encontrar la correspondencia entre los puntos 3d y 2d
 # 5- Usamos draw() para dibujar el cubo como hemos descrito más arriba
-for fname in glob.glob('imagenes/*.jpg'):
+for fname in glob.glob('patron_1_portatil/*.jpg'):
     img = cv.imread(fname)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     ret, corners = cv.findChessboardCorners(gray, (wight,hight), None)
@@ -65,8 +66,8 @@ for fname in glob.glob('imagenes/*.jpg'):
         
         img = draw(img, corners2, imgpts)
         cv.imshow('img', img)
-        k = cv.waitKey(0) & 0xFF
-        if k == ord('s'):
-            cv.imwrite(fname[:hight] + '.png', img)
+        cv.waitKey(0) #& 0xFF
+        # if k == ord('s'):
+        #     cv.imwrite(fname[:hight] + '.png', img)
 
 cv.destroyAllWindows()
