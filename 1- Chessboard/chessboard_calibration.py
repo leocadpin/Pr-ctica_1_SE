@@ -68,7 +68,7 @@ ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.sh
 # Des-distorsión: Sabiendo los parametros de nuestra camara podemos corregir el error en distorsion
 
 
-img = cv2.imread('patron_1_portatil/1.jpg') #Tomamos una imagen de las que usamos en la calibracion
+img = cv2.imread('pattern_p/1.jpg') #Tomamos una imagen de las que usamos en la calibracion
 
 # img_c = img.copy()
 # img = cv2.resize(img_c, None, fx=0.75, fy=0.75)
@@ -77,7 +77,7 @@ img = cv2.imread('patron_1_portatil/1.jpg') #Tomamos una imagen de las que usamo
 h,w = img.shape[:2] #obtenemos dimensiones de la imagen
 
 #Obtenemos la nueva matriz de parametros intrinsecos de la camara 
-newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w, h), 1, (w, h)) # Parámetro de escala libre
+newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w,h), 1, (w,h)) # Parámetro de escala libre
 
 # dst = cv2.undistort(img, mtx, dist, None, newcameramtx)
 
@@ -97,7 +97,7 @@ dst = cv2.remap(img, mapx, mapy, cv2.INTER_LINEAR)
 x, y, w, h = roi
 dst = dst[y:y+h, x:x+w]
 cv2.imwrite('calibResult.jpg', dst)
-np.savez('ParamsCamera', mtx= mtx, distance= dist, rvecs=rvecs, tvecs= tvecs)
+np.savez('Camera_parameters', mtx= mtx, distance= dist, rvecs= rvecs, tvecs= tvecs)
 
 # Error de proyección posterior, para todos los puntos del tablero
 # 1- sacamos la proyeccion de los puntos 3d de la imagen usando los parametros

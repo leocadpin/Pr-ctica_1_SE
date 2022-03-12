@@ -6,7 +6,7 @@ wight = 9
 hight = 6
 
 # Cargamos los datos guardados durante la calibración
-with np.load('ParamsCamera.npz') as X:
+with np.load('Camera_parameters.npz') as X:
     mtx, dist, _, _ = [X[i] for i in ('mtx', 'distance', 'rvecs', 'tvecs')]
 
 # Definimos la función que dibuja el objeto

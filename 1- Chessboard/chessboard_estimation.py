@@ -6,7 +6,7 @@ wight = 9
 hight = 6
 
 # Cargamos los parámetros de la camara obtenidos en la calibración
-with np.load('ParamsCamera.npz') as X:
+with np.load('Camera_parameters.npz') as X:
     mtx, dist, _, _ = [X[i] for i in ('mtx', 'distance', 'rvecs', 'tvecs')]
 
 ############# Definimos la función que dibujará nuestro objeto, en este caso la funcion dibuja un cubo ###########
@@ -50,7 +50,7 @@ axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
 # 4- Teniendo las matrices de transformacion entre sistemas, podemos proyectar los puntos definidos en 
 # axis, y asi encontrar la correspondencia entre los puntos 3d y 2d
 # 5- Usamos draw() para dibujar el cubo como hemos descrito más arriba
-for fname in glob.glob('patron_1_portatil/*.jpg'):
+for fname in glob.glob('pattern_p/*.jpg'):
     img = cv.imread(fname)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     ret, corners = cv.findChessboardCorners(gray, (wight,hight), None)

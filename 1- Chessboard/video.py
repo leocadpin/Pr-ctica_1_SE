@@ -6,7 +6,7 @@ wight = 4
 hight = 11
 
 # Load previously saved data
-with np.load('ParamsCamera_patroncirc.npz') as X:
+with np.load('Camera_parameters.npz') as X:
     mtx, dist, _, _ = [X[i] for i in ('mtx','distance','rvecs','tvecs')]
 
 def draw(img, corners, imgpts):
@@ -31,10 +31,9 @@ objp[:,:2] = np.mgrid[0:wight,0:hight].T.reshape(-1,2)
 # axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
 #                    [0,0,-3],[0,3,-3],[3,3,-3],[3,0,-3] ])
 
-
-
 axis = np.float32([[0,0,0], [0,3*72,0], [3*72,3*72,0], [3*72,0,0],
                    [0,0,-3*72],[0,3*72,-3*72],[3*72,3*72,-3*72],[3*72,0,-3*72] ]).reshape(-1,3)
+
 cam=cv.VideoCapture(0)
 out = cv.VideoWriter('output.avi',cv.VideoWriter_fourcc('M','J','P','G'), 10, (int(cam.get(3)),int(cam.get(4))))
 

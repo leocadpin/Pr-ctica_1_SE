@@ -62,10 +62,8 @@ from cv2 import aruco
 import numpy as np
 
 # # Cargamos los parámetros de la camara obtenidos en la calibración
-with np.load('ParamsCamera_charuco.npz') as X:
+with np.load('Camera_parameters.npz') as X:
     camera_matrix, dist_coeffs, _, _ = [X[i] for i in ('mtx', 'distance', 'rvecs', 'tvecs')]
-
-
 
 
 new_camera_matrix, roi = cv2.getOptimalNewCameraMatrix (camera_matrix, dist_coeffs, (5, 7), 1, (5, 7)) # Parámetro de escala libre
@@ -75,7 +73,7 @@ map1, map2 = cv2.fisheye.initUndistortRectifyMap(camera_matrix, dist_coeffs, Non
 
 
 
-aruco_dict = aruco.getPredefinedDictionary( aruco.DICT_6X6_1000 )
+aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_6X6_1000)
 squareLength = 1.5
 markerLength = 1.2
 board = aruco.CharucoBoard_create(5, 7, squareLength, markerLength, aruco_dict)

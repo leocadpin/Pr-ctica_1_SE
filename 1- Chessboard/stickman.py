@@ -6,7 +6,7 @@ wight = 9
 hight = 6
 
 # Cargamos los parámetros de la camara obtenidos en la calibración
-with np.load('ParamsCamera.npz') as X:
+with np.load('Camera_parameters.npz') as X:
     mtx, dist, _, _ = [X[i] for i in ('mtx','distance','rvecs','tvecs')]
 
 ############# Definimos la función que dibujará nuestro objeto, en este caso la funcion dibuja un hombre de palo azul ###########

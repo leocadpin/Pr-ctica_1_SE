@@ -178,7 +178,7 @@ for image in img:
 cv2.destroyAllWindows()
 
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
-np.savez('ParamsCamera_patroncirc', mtx= mtx, distance= dist, rvecs=rvecs, tvecs= tvecs)
+np.savez('Camera_parameters', mtx= mtx, distance= dist, rvecs=rvecs, tvecs= tvecs)
 
 #  Python code to write the image (OpenCV 3.2)
 fs = cv2.FileStorage('calibration.yml', cv2.FILE_STORAGE_WRITE)

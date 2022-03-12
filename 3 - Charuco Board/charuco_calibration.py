@@ -5,7 +5,7 @@ from cv2 import aruco as aruco
 import glob
 
 #Añadimos la ruta a la carpeta de imagenes del tablero para calibrar
-images = glob.glob('patron_charuco/*.jpg')
+images = glob.glob('pattern_p/*.jpg')
 
 # Parameters
 
@@ -71,8 +71,8 @@ ret, mtx, dist, rvecs, tvecs = aruco.calibrateCameraCharuco(
     distCoeffs=None)
 # 
 
-np.savez('ParamsCamera_charuco', mtx= mtx, distance= dist, rvecs=rvecs, tvecs= tvecs)
-original = cv2.imread('patron_charuco/1.jpg')
+np.savez('Camera_parameters', mtx= mtx, distance= dist, rvecs=rvecs, tvecs= tvecs)
+original = cv2.imread('pattern_p/1.jpg')
 dst = cv2.undistort(original, mtx, dist, None, mtx)
 cv2.imwrite('undist_charuco.jpg', dst)
 

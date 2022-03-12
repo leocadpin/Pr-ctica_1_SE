@@ -7,7 +7,7 @@ wight = 7
 hight = 5
 
 # Cargamos los parámetros de la camara obtenidos en la calibración
-with np.load('ParamsCamera_charuco.npz') as X:
+with np.load('Camera_parameters.npz') as X:
     mtx, dist, rvecs, tvecs = [X[i] for i in ('mtx','distance','rvecs','tvecs')]
 
 
