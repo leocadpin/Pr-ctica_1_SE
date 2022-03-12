@@ -38,9 +38,17 @@ criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 objp = np.zeros((hight*wight, 3), np.float32)
 objp[:,:2] = np.mgrid[0:wight, 0:hight].T.reshape(-1,2)
 
+# En axis introducimos las coordenadas de los puntos a dibujar del cubo
 axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
                    [0,0,-3], [0,3,-3], [3,3,-3], [3,0,-3]])
 
+#Para cada imagen:
+# 1- Sacamos las esquinas del tablero
+# 2- Si encontramos las esquinas obtenemos los subpixeles de estas 
+# 3- Usamos la funcion pnp para que resuelva el problema de calcular la posicion de la camara
+# 4- Teniendo las matrices de transformacion entre sistemas, podemos proyectar los puntos definidos en 
+# axis, y asi encontrar la correspondencia entre los puntos 3d y 2d
+# 5- Usamos draw() para dibujar el cubo como hemos descrito más arriba
 for fname in glob.glob('imagenes/*.jpg'):
     img = cv.imread(fname)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
