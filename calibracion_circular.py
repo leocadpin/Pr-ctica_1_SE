@@ -128,7 +128,7 @@ objp[42] = (360, 144, 0)
 objp[43] = (360, 216, 0)
 ###################################################################################################
 
-img = glob.glob('patron_2_portatil/*.jpg')
+img = glob.glob('patron_circular_p/*.jpg')
 
 
 # Arrays to store object points and image points from all the images.
