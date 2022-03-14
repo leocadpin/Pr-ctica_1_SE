@@ -77,18 +77,16 @@ dst = cv2.undistort(original, mtx, dist, None, mtx)
 cv2.imwrite('undist_charuco.jpg', dst)
 
 
-# Error de proyección posterior, para todos los puntos del tablero
-# 1- sacamos la proyeccion de los puntos 3d de la imagen usando los parametros
-# que hemos obtenido en la calibracion
-# 2-calculamos la norma entre las proyecciones y los puntos bidimensionales 
-# 3-dividimos entre el numero de puntos para obtener un resultado normalizado
-# 4-vamos acumulando este error y finalmente sacamos la media aritmética
-# 5- Cuanto mas pequeño sea el valor, mas exactos deberian ser nuestros parametros
-# total_error = 0
-# for i in range(len(objpoints)):
-# 	imgpoints2, _ = cv2.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
-# 	error = cv2.norm(imgpoints[i],imgpoints2, cv2.NORM_L2)/len(imgpoints2)
-# 	total_error += error
-# alt, anch = img.shape[:2]
-# #diagonal = raiz de alt² y anch²
-# print(("total error: "), total_error/len(objpoints))
+total_error = 0
+for i in range(len(objpoints)):
+	imgpoints2, _ = cv2.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
+	error = cv2.norm(imgpoints[i],imgpoints2, cv2.NORM_L2)/len(imgpoints2)
+	total_error += error
+
+alt, anch = img.shape[:2]
+
+alt2 = alt**2
+anch2 = anch**2
+alo = alt2+anch2
+diagonal = np.sqrt(alo)
+print(("total error: "), total_error/len(objpoints)/diagonal)
