@@ -72,21 +72,21 @@ ret, mtx, dist, rvecs, tvecs = aruco.calibrateCameraCharuco(
 # 
 
 np.savez('Camera_parameters', mtx= mtx, dist= dist, rvecs=rvecs, tvecs= tvecs)
-original = cv2.imread('3_Charuco_Board/patron_p/1.jpg')
+original = cv2.imread('patron_p/1.jpg')
 dst = cv2.undistort(original, mtx, dist, None, mtx)
 cv2.imwrite('undist_charuco.jpg', dst)
 
 
-total_error = 0
-for i in range(len(objpoints)):
-	imgpoints2, _ = cv2.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
-	error = cv2.norm(imgpoints[i],imgpoints2, cv2.NORM_L2)/len(imgpoints2)
-	total_error += error
+# total_error = 0
+# for i in range(len(corners_list)):
+# 	imgpoints2, _ = cv2.projectPoints(corners_list[i], rvecs[i], tvecs[i], mtx, dist)
+# 	error = cv2.norm(id_list[i],imgpoints2, cv2.NORM_L2)/len(imgpoints2)
+# 	total_error += error
 
-alt, anch = img.shape[:2]
+# alt, anch = img.shape[:2]
 
-alt2 = alt**2
-anch2 = anch**2
-alo = alt2+anch2
-diagonal = np.sqrt(alo)
-print(("total error: "), total_error/len(objpoints)/diagonal)
+# alt2 = alt**2
+# anch2 = anch**2
+# alo = alt2+anch2
+# diagonal = np.sqrt(alo)
+# print(("total error: "), total_error/len(corners_list)/diagonal)

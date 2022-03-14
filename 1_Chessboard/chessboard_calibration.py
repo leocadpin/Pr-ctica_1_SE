@@ -22,14 +22,14 @@ imgpoints = [] # Puntos 2D bidimensionales en el plano de la imagen
 
 
 #Añadimos la ruta a la carpeta de imagenes del tablero para calibrar
-images = glob.glob('pattern_p/*.jpg')
+images = glob.glob('pattern_3x4/*.jpg')
 
 
 for fname in images: #Repetimos el siguiente proceso para cada imagen
 	img = cv2.imread(fname)
 
-	# img_c = img.copy()
-	# img = cv2.resize(img_c, None, fx=0.75, fy=0.75)
+	img_c = img.copy()
+	img = cv2.resize(img_c, None, fx=0.5, fy=0.5)
 
 	gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 
@@ -47,8 +47,8 @@ for fname in images: #Repetimos el siguiente proceso para cada imagen
 		# Mostrar los puntos de esquina en la imagen
 		cv2.drawChessboardCorners(img, (w,h), corners2, ret)
 
-		# img_res= img.copy()
-		# img_res= cv2.resize(img_res, None, fx=0.25, fy=.25)
+		img_res= img.copy()
+		img_res= cv2.resize(img_res, None, fx=0.5, fy=0.5)
 
 		cv2.imshow('findCorners', img)
 		cv2.waitKey(0)
@@ -68,7 +68,7 @@ ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.sh
 
 # Des-distorsión: Sabiendo los parametros de nuestra camara podemos corregir el error en distorsion
 
-img = cv2.imread('pattern_p/1.jpg') #Tomamos una imagen de las que usamos en la calibracion
+img = cv2.imread('pattern_3x4/1.jpg') #Tomamos una imagen de las que usamos en la calibracion
 
 # img_c = img.copy()
 # img = cv2.resize(img_c, None, fx=0.75, fy=0.75)
