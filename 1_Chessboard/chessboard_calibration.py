@@ -1,9 +1,10 @@
 import cv2
+from cv2 import sqrt
 import numpy as np
 import glob
 from dis import dis
 
-# Encuentra esquinas de tablero de ajedrez
+# Encuentra_esquinas de tablero de ajedrez
 # Límite
 criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
@@ -17,11 +18,11 @@ objp[:,:2] = np.mgrid[0:w,0:h].T.reshape(-1,2)
 
 # Guarde las coordenadas de mundo y el par de coordenadas de imagen de los puntos de esquina del tablero
 objpoints = [] # puntos 3D en el sistema mundial de coordenadas
-imgpoints = [] # Puntos bidimensionales en el plano de la imagen
+imgpoints = [] # Puntos 2D bidimensionales en el plano de la imagen
 
 
 #Añadimos la ruta a la carpeta de imagenes del tablero para calibrar
-images = glob.glob('patron_1_portatil/*.jpg')
+images = glob.glob('pattern_m/*.jpg')
 
 
 for fname in images: #Repetimos el siguiente proceso para cada imagen
@@ -111,6 +112,11 @@ for i in range(len(objpoints)):
 	imgpoints2, _ = cv2.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
 	error = cv2.norm(imgpoints[i],imgpoints2, cv2.NORM_L2)/len(imgpoints2)
 	total_error += error
+
 alt, anch = img.shape[:2]
-#diagonal = raiz de alt² y anch²
-print(("total error: "), total_error/len(objpoints))
+
+alt2 = h*h
+anch2 = w*w
+alo = alt2+anch2
+diagonal = np.sqrt(alo)
+print(("total error: "), total_error/len(objpoints)/diagonal)

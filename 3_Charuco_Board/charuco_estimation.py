@@ -42,12 +42,18 @@ arucoParams = aruco.DetectorParameters_create()
 
 
 # En axis introducimos las coordenadas de los puntos a dibujar del stickman
-axis = np.float32([ [0,0,0],
-                    [0,1,0], [0,3,0],
-                    [0,1,-3], [0,2,-3], [0,3,-3],
-                    [0,1,-6], [0,2,-6], [0,3,-6],
-                    [0,0,-3], [0,4,-3],
-                    [0,2,-7]])
+
+# Coord puntos para dibujar el stickman
+# axis = np.float32([[33,66,0],[33,99,40],[33,132,40],[33,99,40],[33,132,40],[33,99,100],[33,99,100],[33,132,100],[33,115.5,100],
+                #   [33,99,40],[33,132,40],[33,165,0],[33,99,100],[33,132,100],[33,132,100],[33,66,40],[33,165,40],[33,115.5,135]])
+
+#### ESTOS SON LOS MEJORES HASTA AHORA
+axis = np.float32([ [0,1,0],
+                    [0,2*markerLength,0], [0,4*markerLength,0],
+                    [0,2*markerLength,2*markerLength], [0,3*markerLength,2*markerLength], [0,4*markerLength,2*markerLength],
+                    [0,2*markerLength,4*markerLength], [0,3*markerLength,4*markerLength], [0,4*markerLength,4*markerLength],
+                    [0,1,2*markerLength], [0,5*markerLength,2*markerLength],
+                    [0,3*markerLength,6*markerLength]])
 
 # axis = np.float32([ [0*72,0*72,0*72],
 #                     [0,1*72,0], [0,3*72,0],
@@ -83,9 +89,11 @@ while True:
             charucoretval, charucoCorners, charucoIds = aruco.interpolateCornersCharuco(corners, ids, gray, board)
             im_with_charuco_board = aruco.drawDetectedCornersCharuco(im_with_charuco_board, charucoCorners, charucoIds, (0,255,0))
             retval, rvec, tvec = aruco.estimatePoseCharucoBoard(charucoCorners, charucoIds, board, mtx, dist, rvecs, tvecs)  # posture estimation from a charuco board (retval - buena estimacion)
+            
             if retval == True:
-                im_with_charuco_board = aruco.drawAxis(im_with_charuco_board, mtx, dist, rvec, tvec, 2)  # axis length 100 can be changed according to your requirement
-
+                imgpts, jac = cv.projectPoints(axis, rvec, tvec, mtx, dist)
+                # im_with_charuco_board = aruco.drawAxis(im_with_charuco_board, mtx, dist, rvec, tvec, 2)  # axis length 100 can be changed according to your requirement
+                im_with_charuco_board = draw(im_with_charuco_board,charucoCorners, imgpts)
     cv.imshow('images', im_with_charuco_board)
     if cv.waitKey(1)==13:
         break

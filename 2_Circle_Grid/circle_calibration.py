@@ -1,43 +1,3 @@
-
-
-
-################################################################################
-#                                                                              #
-#                                                                              #
-#           IMPORTANT: READ BEFORE DOWNLOADING, COPYING AND USING.             #
-#                                                                              #
-#                                                                              #
-#      Copyright [2017] [ShenZhen Longer Vision Technology], Licensed under    #
-#      ******** GNU General Public License, version 3.0 (GPL-3.0) ********     #
-#      You are allowed to use this file, modify it, redistribute it, etc.      #
-#      You are NOT allowed to use this file WITHOUT keeping the License.       #
-#                                                                              #
-#      Longer Vision Technology is a startup located in Chinese Silicon Valley #
-#      NanShan, ShenZhen, China, (http://www.longervision.cn), which provides  #
-#      the total solution to the area of Machine Vision & Computer Vision.     #
-#      The founder Mr. Pei JIA has been advocating Open Source Software (OSS)  #
-#      for over 12 years ever since he started his PhD's research in England.  #
-#                                                                              #
-#      Longer Vision Blog is Longer Vision Technology's blog hosted on github  #
-#      (http://longervision.github.io). Besides the published articles, a lot  #
-#      more source code can be found at the organization's source code pool:   #
-#      (https://github.com/LongerVision/OpenCV_Examples).                      #
-#                                                                              #
-#      For those who are interested in our blogs and source code, please do    #
-#      NOT hesitate to comment on our blogs. Whenever you find any issue,      #
-#      please do NOT hesitate to fire an issue on github. We'll try to reply   #
-#      promptly.                                                               #
-#                                                                              #
-#                                                                              #
-# Version:          0.0.1                                                      #
-# Author:           JIA Pei                                                    #
-# Contact:          jiapei@longervision.com                                    #
-# URL:              http://www.longervision.cn                                 #
-# Create Date:      2017-03-20                                                 #
-# Modified Date:    2020-01-18                                                 #
-################################################################################
-
-# Standard imports
 import numpy as np
 import cv2
 import yaml
@@ -66,6 +26,7 @@ blobParams.minCircularity = 0.1
 # Filter by Convexity
 blobParams.filterByConvexity = True
 blobParams.minConvexity = 0.87
+# blobParams.minConvexity = 0.87
 
 # Filter by Inertia
 blobParams.filterByInertia = True
@@ -128,7 +89,8 @@ objp[42] = (360, 144, 0)
 objp[43] = (360, 216, 0)
 ###################################################################################################
 
-img = glob.glob('patron_circular_p/*.jpg')
+
+img = glob.glob('pattern_p/*.jpg')
 
 
 # Arrays to store object points and image points from all the images.
@@ -140,7 +102,7 @@ imgpoints = [] # 2d points in image plane.
 num = 10
 found = 0
 for image in img:
-#while(found < 8):  # Here, 10 can be changed to whatever number you like to choose
+# while(found < 8):  # Here, 10 can be changed to whatever number you like to choose
     # ret, img = cap.read() # Capture frame-by-frame
     imagen = cv2.imread(image)
     gray = cv2.cvtColor(imagen, cv2.COLOR_BGR2GRAY)
@@ -178,14 +140,13 @@ for image in img:
 cv2.destroyAllWindows()
 
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
-np.savez('Camera_parameters', mtx= mtx, distance= dist, rvecs=rvecs, tvecs= tvecs)
+np.savez('Camera_parameters', mtx= mtx, dist= dist, rvecs=rvecs, tvecs= tvecs)
 
 #  Python code to write the image (OpenCV 3.2)
 fs = cv2.FileStorage('calibration.yml', cv2.FILE_STORAGE_WRITE)
 fs.write('camera_matrix', mtx)
 fs.write('dist_coeff', dist)
 fs.release()
-
 
 
 # If you want to use PyYAML to read and write yaml files,
