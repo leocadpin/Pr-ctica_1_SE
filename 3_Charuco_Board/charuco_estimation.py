@@ -8,7 +8,7 @@ hight = 5
 
 # Cargamos los parámetros de la camara obtenidos en la calibración
 with np.load('Camera_parameters.npz') as X:
-    mtx, dist, rvecs, tvecs = [X[i] for i in ('mtx','distance','rvecs','tvecs')]
+    mtx, dist, rvecs, tvecs = [X[i] for i in ('mtx','dist','rvecs','tvecs')]
 
 
 squareLength = 1.5
@@ -76,7 +76,7 @@ while True:
 
     im_with_charuco_board = frame.copy()
 
-    if np.all(ids != None): # Dibujaremos si hayamos un id al menos
+    if np.any(ids != None): # Dibujaremos si hayamos un id al menos
             
             ##Obtenemos los puntos del tablero
             charucoretval, charucoCorners, charucoIds = aruco.interpolateCornersCharuco(corners, ids, gray, board)

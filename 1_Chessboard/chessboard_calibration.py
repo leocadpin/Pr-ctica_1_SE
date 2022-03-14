@@ -22,7 +22,7 @@ imgpoints = [] # Puntos 2D bidimensionales en el plano de la imagen
 
 
 #Añadimos la ruta a la carpeta de imagenes del tablero para calibrar
-images = glob.glob('pattern_m/*.jpg')
+images = glob.glob('pattern_p/*.jpg')
 
 
 for fname in images: #Repetimos el siguiente proceso para cada imagen
