@@ -7,9 +7,10 @@ hight = 6
 
 # Cargamos los parámetros de la camara obtenidos en la calibración
 with np.load('Camera_parameters.npz') as X:
-    mtx, dist, _, _ = [X[i] for i in ('mtx', 'distance', 'rvecs', 'tvecs')]
+    mtx, dist, _, _ = [X[i] for i in ('mtx', 'dist', 'rvecs', 'tvecs')]
 
 ############# Definimos la función que dibujará nuestro objeto, en este caso la funcion dibuja un cubo ###########
+
 def draw(img, corners, imgpts):
     imgpts = np.int32(imgpts).reshape(-1,2)
 
@@ -29,8 +30,8 @@ def draw(img, corners, imgpts):
     img = cv.drawContours(img, [imgpts[4:]], -1, (0,0,255), 3)
     
     return img
-###########################################################################################################
 
+###########################################################################################################
 
 # Creamos un criterio de terminacion
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -43,7 +44,7 @@ objp[:,:2] = np.mgrid[0:wight, 0:hight].T.reshape(-1,2)
 axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
                    [0,0,-3], [0,3,-3], [3,3,-3], [3,0,-3]])
 
-#Para cada imagen:
+# Para cada imagen:
 # 1- Sacamos las esquinas del tablero
 # 2- Si encontramos las esquinas obtenemos los subpixeles de estas 
 # 3- Usamos la funcion pnp para que resuelva el problema de calcular la posicion de la camara

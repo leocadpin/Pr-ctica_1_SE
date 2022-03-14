@@ -7,7 +7,7 @@ hight = 6
 
 # Cargamos los datos guardados durante la calibración
 with np.load('Camera_parameters.npz') as X:
-    mtx, dist, _, _ = [X[i] for i in ('mtx', 'distance', 'rvecs', 'tvecs')]
+    mtx, dist, _, _ = [X[i] for i in ('mtx', 'dist', 'rvecs', 'tvecs')]
 
 # Definimos la función que dibuja el objeto
 def draw(img, corners, imgpts):
@@ -35,7 +35,7 @@ axis = np.float32([ [0,0,0],
                     [0,0,-3], [0,4,-3],
                     [0,2,-7]])
 
-for fname in glob.glob('patron_1_portatil/*.jpg'):
+for fname in glob.glob('pattern_p/*.jpg'):
     img = cv.imread(fname)
 
     # img_c = img.copy()

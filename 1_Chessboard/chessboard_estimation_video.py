@@ -7,7 +7,7 @@ hight = 6
 
 # Cargamos los parámetros de la camara obtenidos en la calibración
 with np.load('Camera_parameters.npz') as X:
-    mtx, dist, _, _ = [X[i] for i in ('mtx','distance','rvecs','tvecs')]
+    mtx, dist, _, _ = [X[i] for i in ('mtx','dist','rvecs','tvecs')]
 
 ############# Definimos la función que dibujará nuestro objeto, en este caso la funcion dibuja un hombre de palo azul ###########
 
@@ -26,6 +26,8 @@ def draw(img, corners, imgpts):
 
     return img
 
+##################################################################################################################################
+
 # Creamos un criterio de terminacion, o bien terminamos de buscar el pixel suboptimo a las x iteraciones
 # o bien terminamos cuando encontremos un subpixel de precision x
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 100, 0.001)
@@ -33,6 +35,7 @@ criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 100, 0.001)
 # Definimos la malla de puntos que colocaremos sobre el tablero
 objp = np.zeros((hight*wight,3), np.float32)
 objp[:,:2] = np.mgrid[0:wight,0:hight].T.reshape(-1,2)
+
 # En axis introducimos las coordenadas de los puntos a dibujar del stickman
 axis = np.float32([ [0,0,0],
                     [0,1,0], [0,3,0],
