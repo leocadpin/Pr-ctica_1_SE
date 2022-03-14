@@ -117,8 +117,8 @@ for image in img:
     if ret == True:
         objpoints.append(objp)  # Certainly, every loop objp is the same, in 3D.
 
-        # corners2 = cv2.cornerSubPix(im_with_keypoints_gray, corners, (11,11), (-1,-1), criteria)    # Refines the corner locations.
-        corners2 = corners
+        corners2 = cv2.cornerSubPix(im_with_keypoints_gray, corners, (4,11), (-1,-1), criteria)    # Refines the corner locations.
+        # corners2 = corners
         imgpoints.append(corners2)
 
         # Draw and display the corners.
@@ -142,24 +142,3 @@ cv2.destroyAllWindows()
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
 np.savez('Camera_parameters', mtx= mtx, dist= dist, rvecs=rvecs, tvecs= tvecs)
 
-#  Python code to write the image (OpenCV 3.2)
-fs = cv2.FileStorage('calibration.yml', cv2.FILE_STORAGE_WRITE)
-fs.write('camera_matrix', mtx)
-fs.write('dist_coeff', dist)
-fs.release()
-
-
-# If you want to use PyYAML to read and write yaml files,
-# try the following part
-# It's very important to transform the matrix to list.
-# data = {'camera_matrix': np.asarray(mtx).tolist(), 'dist_coeff': np.asarray(dist).tolist()}
-
-# with open("calibration.yaml", "w") as f:
-#    yaml.dump(data, f)
-
-# You can use the following 4 lines of code to load the data in file "calibration.yaml"
-# Read YAML file
-#with open(calibrationFile, 'r') as stream:
-#    dictionary = yaml.safe_load(stream)
-#camera_matrix = dictionary.get("camera_matrix")
-#dist_coeffs = dictionary.get("dist_coeff")
