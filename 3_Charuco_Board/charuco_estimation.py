@@ -13,7 +13,7 @@ with np.load('Camera_parameters.npz') as X:
 
 squareLength = 1.5
 markerLength = 1.2
-############# Definimos la función que dibujará nuestro objeto, en este caso la funcion dibuja un hombre de palo azul ###########
+############# Definimos la función que dibujará nuestro objeto, en este caso la funcion dibuja un hombre de palo azul 😎😎😎😎###########
 
 def draw(img, corners, imgpts):
     imgpts = np.int32(imgpts).reshape(-1,2)
@@ -43,11 +43,6 @@ arucoParams = aruco.DetectorParameters_create()
 
 # En axis introducimos las coordenadas de los puntos a dibujar del stickman
 
-# Coord puntos para dibujar el stickman
-# axis = np.float32([[33,66,0],[33,99,40],[33,132,40],[33,99,40],[33,132,40],[33,99,100],[33,99,100],[33,132,100],[33,115.5,100],
-                #   [33,99,40],[33,132,40],[33,165,0],[33,99,100],[33,132,100],[33,132,100],[33,66,40],[33,165,40],[33,115.5,135]])
-
-#### ESTOS SON LOS MEJORES HASTA AHORA
 axis = np.float32([ [0,1,0],
                     [0,2*markerLength,0], [0,4*markerLength,0],
                     [0,2*markerLength,2*markerLength], [0,3*markerLength,2*markerLength], [0,4*markerLength,2*markerLength],
@@ -55,12 +50,6 @@ axis = np.float32([ [0,1,0],
                     [0,1,2*markerLength], [0,5*markerLength,2*markerLength],
                     [0,3*markerLength,6*markerLength]])
 
-# axis = np.float32([ [0*72,0*72,0*72],
-#                     [0,1*72,0], [0,3*72,0],
-#                     [0,1*72,-3*72], [0,2*72,-3*72], [0,3*72,-3*72],
-#                     [0,1*72,-6*72], [0,2*72,-6*72], [0,3*72,-6*72],
-#                     [0,0,-3*72], [0,4*72,-3*72],
-#                     [0,2*72,-7*72]])
 
 # Activamos la camara 
 cam=cv.VideoCapture(-1)
@@ -69,10 +58,11 @@ out = cv.VideoWriter('output.avi',cv.VideoWriter_fourcc('M','J','P','G'), 10, (i
 # Mientras la camara este capturando imagenes, para cada frame:
 # 1- Sacamos las esquinas del tablero
 # 2- Si encontramos las esquinas obtenemos los subpixeles de estas 
-# 3- Usamos la funcion pnp para que resuelva el problema de calcular la posicion de la camara
+# 3- Usamos la funcion estimatePoseCharucoBoard() para que resuelva el problema de calcular la posicion de la camara
 # 4- Teniendo las matrices de transformacion entre sistemas, podemos proyectar los puntos definidos en 
 # axis, y asi encontrar la correspondencia entre los puntos 3d y 2d
-# 5- Usamos draw() para dibujar el cubo como hemos descrito más arriba
+# 5- Usamos draw() para dibujar el stickman como hemos descrito más arriba
+
 while True:
     hasframe,frame=cam.read()
     if hasframe==False:
@@ -83,17 +73,29 @@ while True:
     corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, aruco_dict, parameters=arucoParams)  # First, detect markers
     aruco.refineDetectedMarkers(gray, board, corners, ids, rejectedImgPoints)
 
+
     im_with_charuco_board = frame.copy()
 
-    if np.all(ids != None): # if there is at least one marker detected
+    if np.all(ids != None): # Dibujaremos si hayamos un id al menos
+            
+            ##Obtenemos los puntos del tablero
             charucoretval, charucoCorners, charucoIds = aruco.interpolateCornersCharuco(corners, ids, gray, board)
+            
+            #Dibujamos los corners que se hayan
             im_with_charuco_board = aruco.drawDetectedCornersCharuco(im_with_charuco_board, charucoCorners, charucoIds, (0,255,0))
+            
+            #A partir de los puntos del tablero obtenemos las coordenadas (parametros extrinsecos)
             retval, rvec, tvec = aruco.estimatePoseCharucoBoard(charucoCorners, charucoIds, board, mtx, dist, rvecs, tvecs)  # posture estimation from a charuco board (retval - buena estimacion)
             
             if retval == True:
+
+                # Obtenemos los puntos proyectados
                 imgpts, jac = cv.projectPoints(axis, rvec, tvec, mtx, dist)
-                # im_with_charuco_board = aruco.drawAxis(im_with_charuco_board, mtx, dist, rvec, tvec, 2)  # axis length 100 can be changed according to your requirement
+                # im_with_charuco_board = aruco.drawAxis(im_with_charuco_board, mtx, dist, rvec, tvec, 2)  #esto printearia los axis
+                
+                ## Dibujamos el stickman
                 im_with_charuco_board = draw(im_with_charuco_board,charucoCorners, imgpts)
+
     cv.imshow('images', im_with_charuco_board)
     if cv.waitKey(1)==13:
         break
