@@ -26,8 +26,9 @@ def draw(img, corners, imgpts):
 
     return img
 
-# Creamos un criterio de terminacion
-criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+# Creamos un criterio de terminacion, o bien terminamos de buscar el pixel suboptimo a las x iteraciones
+# o bien terminamos cuando encontremos un subpixel de precision x
+criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 100, 0.001)
 
 # Definimos la malla de puntos que colocaremos sobre el tablero
 objp = np.zeros((hight*wight,3), np.float32)
@@ -65,7 +66,9 @@ while True:
     gray=cv.cvtColor(frame,cv.COLOR_BGR2GRAY)
     ret,corners = cv.findChessboardCorners(gray,(9,6),None)
     if ret == True:
-        _,rvec,tvec,_=cv.solvePnPRansac(objp,corners,mtx,dist)
+        corners2 = cv.cornerSubPix(gray,corners, (11,11), (-1,-1), criteria)
+        # _,rvec,tvec,_=cv.solvePnPRansac(objp,corners2,mtx,dist)
+        _,rvec,tvec =cv.solvePnP(objp,corners2,mtx,dist)
         imgpts,_=cv.projectPoints(axis,rvec,tvec,mtx,dist)
         frame = draw(frame,corners,imgpts)
     cv.imshow('images',frame)
