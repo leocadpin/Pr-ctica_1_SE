@@ -19,10 +19,8 @@ objp[:,:2] = np.mgrid[0:w,0:h].T.reshape(-1,2)
 objpoints = [] # puntos 3D en el sistema mundial de coordenadas
 imgpoints = [] # Puntos bidimensionales en el plano de la imagen
 
-
-#Añadimos la ruta a la carpeta de imagenes del tablero para calibrar
-images = glob.glob('patron_1_portatil/*.jpg')
-
+# Añadimos la ruta a la carpeta de imagenes del tablero para calibrar
+images = glob.glob('pattern_p/*.jpg')
 
 for fname in images: #Repetimos el siguiente proceso para cada imagen
 	img = cv2.imread(fname)
@@ -39,7 +37,7 @@ for fname in images: #Repetimos el siguiente proceso para cada imagen
 	if ret == True:
 		objpoints.append(objp)
 
-		#buscamos la localizacion mas adecuada para los subpixeles
+		# Buscamos la localizacion mas adecuada para los subpixeles
 		corners2 = cv2.cornerSubPix(gray,corners,(11,11),(-1,-1),criteria)
 		imgpoints.append(corners)
 		
@@ -55,8 +53,8 @@ for fname in images: #Repetimos el siguiente proceso para cada imagen
 cv2.destroyAllWindows()
 
 # Calibración
-#Usamos la funcion calibrate camera, que obtendrá los parámetros intrinsecos y extrinsecos de la
-#camara. (Esta funcion aplicará el algoritmo de Levenberg Marquardt)
+# Usamos la funcion calibrate camera, que obtendrá los parámetros intrinsecos y extrinsecos de la
+# camara. (Esta funcion aplicará el algoritmo de Levenberg Marquardt)
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
 
 # print (("ret:"),ret)
@@ -67,16 +65,14 @@ ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.sh
 
 # Des-distorsión: Sabiendo los parametros de nuestra camara podemos corregir el error en distorsion
 
-
 img = cv2.imread('pattern_p/1.jpg') #Tomamos una imagen de las que usamos en la calibracion
 
 # img_c = img.copy()
 # img = cv2.resize(img_c, None, fx=0.75, fy=0.75)
 
-
 h,w = img.shape[:2] #obtenemos dimensiones de la imagen
 
-#Obtenemos la nueva matriz de parametros intrinsecos de la camara 
+# Obtenemos la nueva matriz de parametros intrinsecos de la camara 
 newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w,h), 1, (w,h)) # Parámetro de escala libre
 
 # dst = cv2.undistort(img, mtx, dist, None, newcameramtx)
@@ -88,8 +84,8 @@ newcameramtx, roi = cv2.getOptimalNewCameraMatrix (mtx, dist, (w,h), 1, (w,h)) #
 
 # Undistort usando un remapeado 
 
-#Usamos la siguiente funcion para conseguir la rectificacion de la imagen dandonos como
-#resultado mapas para remapear la imagen original
+# Usamos la siguiente funcion para conseguir la rectificacion de la imagen dandonos como
+# resultado mapas para remapear la imagen original
 mapx, mapy = cv2.initUndistortRectifyMap(mtx, dist, None, newcameramtx, (w,h), 5)
 dst = cv2.remap(img, mapx, mapy, cv2.INTER_LINEAR)
 
@@ -97,7 +93,7 @@ dst = cv2.remap(img, mapx, mapy, cv2.INTER_LINEAR)
 x, y, w, h = roi
 dst = dst[y:y+h, x:x+w]
 cv2.imwrite('calibResult.jpg', dst)
-np.savez('Camera_parameters', mtx= mtx, distance= dist, rvecs= rvecs, tvecs= tvecs)
+np.savez('Camera_parameters', mtx= mtx, dist= dist, rvecs= rvecs, tvecs= tvecs)
 
 # Error de proyección posterior, para todos los puntos del tablero
 # 1- sacamos la proyeccion de los puntos 3d de la imagen usando los parametros
@@ -112,5 +108,5 @@ for i in range(len(objpoints)):
 	error = cv2.norm(imgpoints[i],imgpoints2, cv2.NORM_L2)/len(imgpoints2)
 	total_error += error
 alt, anch = img.shape[:2]
-#diagonal = raiz de alt² y anch²
+# diagonal = raiz de alt² y anch²
 print(("total error: "), total_error/len(objpoints))
