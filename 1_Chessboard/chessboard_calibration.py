@@ -20,15 +20,10 @@ objp[:,:2] = np.mgrid[0:w,0:h].T.reshape(-1,2)
 objpoints = [] # puntos 3D en el sistema mundial de coordenadas
 imgpoints = [] # Puntos 2D bidimensionales en el plano de la imagen
 
-<<<<<<< HEAD
 
 #Añadimos la ruta a la carpeta de imagenes del tablero para calibrar
 images = glob.glob('pattern_m/*.jpg')
 
-=======
-# Añadimos la ruta a la carpeta de imagenes del tablero para calibrar
-images = glob.glob('pattern_p/*.jpg')
->>>>>>> c490231418cd73dd0a31935e1ca45c0286ae6574
 
 for fname in images: #Repetimos el siguiente proceso para cada imagen
 	img = cv2.imread(fname)
@@ -117,14 +112,9 @@ for i in range(len(objpoints)):
 	total_error += error
 
 alt, anch = img.shape[:2]
-<<<<<<< HEAD
 
 alt2 = h*h
 anch2 = w*w
 alo = alt2+anch2
 diagonal = np.sqrt(alo)
 print(("total error: "), total_error/len(objpoints)/diagonal)
-=======
-# diagonal = raiz de alt² y anch²
-print(("total error: "), total_error/len(objpoints))
->>>>>>> c490231418cd73dd0a31935e1ca45c0286ae6574
