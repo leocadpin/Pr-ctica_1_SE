@@ -142,3 +142,16 @@ cv2.destroyAllWindows()
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
 np.savez('Camera_parameters', mtx= mtx, dist= dist, rvecs=rvecs, tvecs= tvecs)
 
+# total_error = 0
+# for i in range(len(objpoints)):
+# 	imgpoints2, _ = cv2.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
+# 	error = cv2.norm(imgpoints[i],imgpoints2, cv2.NORM_L2)/len(imgpoints2)
+# 	total_error += error
+
+# alt, anch = im_with_keypoints.shape[:2]
+
+# alt2 = h*h
+# anch2 = w*w
+# alo = alt2+anch2
+# diagonal = np.sqrt(alo)
+# print(("total error: "), total_error/len(objpoints)/diagonal)
