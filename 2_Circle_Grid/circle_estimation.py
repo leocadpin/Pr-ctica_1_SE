@@ -103,6 +103,9 @@ imgDir = "imgSequence"  # Specify the image directory
 imgFileNames = [os.path.join(imgDir, fn) for fn in next(os.walk(imgDir))[2]]
 nbOfImgs = len(imgFileNames)
 
+ 
+#Proceso de deteccion de pose, es practicamente igual al usado en el chessboard, pero en este caso
+# usamos el blobdetector para encontrar esos puntos clave en el tablero
 for image in glob.glob('pattern_p/*.jpg'):
     img = cv2.imread(image, cv2.IMREAD_COLOR)
     imgRemapped = cv2.remap(img, map1, map2, cv2.INTER_LINEAR, cv2.BORDER_CONSTANT) # for fisheye remapping

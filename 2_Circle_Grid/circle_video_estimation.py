@@ -10,7 +10,7 @@ with np.load('Camera_parameters.npz') as file:
 objp = np.zeros((4*11,3), np.float32)
 objp[:,:2] = np.mgrid[0:4,0:11].T.reshape(-1,2)
 
-
+ 
 axis = np.float32([[2,0,0], [2,-3,0]])
                   
 
@@ -22,7 +22,8 @@ def draw_cube(img, corners, imgpts):
    
     return img
 
-
+#Proceso de deteccion de pose, es practicamente igual al usado en el chessboard, pero en este caso
+# usamos el blobdetector para encontrar esos puntos clave en el tablero
 
 
 cam=cv2.VideoCapture(0)
