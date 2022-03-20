@@ -112,4 +112,4 @@ alt2 = alt**2
 anch2 = anch**2
 alo = alt2+anch2
 diagonal = np.sqrt(alo)
-print(("total error: "), total_error/len(objpoints)/diagonal)
+print(("total error: "), format(total_error/len(objpoints)/diagonal, '.8f'))
